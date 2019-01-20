@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
-    public int _nextLevel;
+    public string _nextLevel;
 
     private MoveableObject _moveableObject;
     private Rigidbody2D _rigidbody;
@@ -55,7 +55,11 @@ public class Player : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {
-            Restart();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("LevelSelect");
         }
 
         if (_flip)
@@ -74,14 +78,8 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Donut"))
         {
-            Debug.Log("level won");
             collision.gameObject.SetActive(false);
-            SceneManager.LoadScene(_nextLevel.ToString());
+            SceneManager.LoadScene(_nextLevel);
         }
-    }
-
-    private void Restart()
-    { 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

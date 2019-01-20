@@ -9,8 +9,15 @@ public enum Direction
     LEFT
 }
 
+public enum MoveableObjectType
+{ 
+    BOX,
+    BALL,
+}
+
 public class MoveableObject : MonoBehaviour
 {
+    public MoveableObjectType _movementType;
     private Vector2 _newPosition;
     private Rigidbody2D _rigidbody;
 
@@ -54,7 +61,7 @@ public class MoveableObject : MonoBehaviour
         if (collidersHit > 0)
         {
             MoveableObject moveableObject = hits[0].collider.gameObject.GetComponent<MoveableObject>();
-            if (moveableObject.ObjectsInDirection(direction) == false)
+            if (moveableObject.ObjectsInDirection(direction, 1) == false)
             {
                 moveableObject.MoveInDirection(direction);
                 return true;
@@ -64,9 +71,9 @@ public class MoveableObject : MonoBehaviour
         return collidersHit == 0;
     }
 
-    public bool ObjectsInDirection(Direction direction)
+    public bool ObjectsInDirection(Direction direction, int distance)
     {
-        Vector3 raycast = transform.position + (Vector3)_directionToVectorMap[direction];
+        Vector3 raycast = transform.position + (Vector3)_directionToVectorMap[direction] * distance;
         RaycastHit2D[] hits = new RaycastHit2D[1];
 
         // create a filter for the raycast
@@ -81,6 +88,19 @@ public class MoveableObject : MonoBehaviour
 
     public void MoveInDirection(Direction direction)
     {
-        _newPosition = (Vector3)_newPosition + _directionToVectorMap[direction];
+        int distanceToMove = 1;
+
+        if (_movementType == MoveableObjectType.BALL)
+        {
+            while (ObjectsInDirection(direction, distanceToMove) == false && distanceToMove < 10)
+            {
+                distanceToMove++;
+            }
+
+            distanceToMove--;
+        }
+
+
+        _newPosition = (Vector3)_newPosition + _directionToVectorMap[direction] * distanceToMove;
     }
 }
